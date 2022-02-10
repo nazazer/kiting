@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<link rel = "stylesheet" href = "styles/style.css">
+		<link rel = "icon" type = "image/png" href = "images/favicon64x64.png">
+		<link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title> Кайтсёрфинг - Вид водного туризма для адреналина и развлечений | Water & Adrenalin Lab </title>
+	</head>
+	<body>
+		
+		<nav>
+			<div class = "navtext">
+				<img src = "images/logov3.png">
+				Water & Adrenalin Lab
+			</div>
+			<a href = ""> Главная </a>
+			<a href = ""> Обучение </a>
+			<a href = ""> Локации </a>
+			<a href = ""> Отзывы </a>
+		</nav>
+
+		<video autoplay muted loop poster = "images/poster.jpg" id = "vid">
+			<source src = "video/kite.mp4" type = "video/mp4">
+		</video>
+
+		<div class = "filter"></div>
+
+		<section id = "mains">
+
+			<div class = "interior">
+				<div class = "center_block">
+					<h1 class = "tabcontent"> <font style = "color: #f0fdff; text-decoration: underline;">Кайтсёрфинг</font> - уникальный, экстремальный и захватывающий спорт, который в паре с туризмом подарит Вам незабываемые впечатления </h1>
+					<div><h2><i class="fas fa-angle-double-left"></i>Ваш серфинг улучшается с каждой покоренной волной, с каждым поворотом. Тщательнее изучайте океан. Большая часть моего успеха зависит от знаний волны<i class="fas fa-angle-double-right"></i></h2>
+					<font class = "quote">Келли Слейтер</font></div>
+					<a href = "#can_sec" id = "dive">Нырнуть</a>
+				</div>
+			</div>
+
+
+			<svg viewBox = "400 200 400 200" preserveAspectRatio = "none" xmlns = "http://www.w3.org/2000/svg">
+				<defs><path id = "wave" d = "M799.85,333.38c-74.21,0.59-120.27-55.45-183.64-58.37c-93.14-10.07-130.72,59.03-215.72,57.97 c-74.96-0.93-120.62-54.93-183.99-57.85c-93.44-9.7-130.26,59.07-216.26,58.55l0,0L0,400h800L799.85,333.38L799.85,333.38z"></path></defs>
+				<g class = "movegroup">
+					<use xlink:href = "#wave" x = "0" y = "0" fill = "#13a7ffff"  fill-opacity = ".3"></use>
+					<use xlink:href = "#wave" x = "0" y = "10" fill = "#4EBDFF" fill-opacity = ".9"></use>
+					<use xlink:href = "#wave" x = "0" y = "30" fill = "#7DCFFF"></use>
+					<use xlink:href = "#wave" x = "0" y = "50" fill = "#13a7ffff"></use>
+				</g>
+			</svg>
+		</section>
+
+		<section>
+			<canvas id = "can_sec"></canvas>
+		</section>
+
+		<script src = "js/script.js"></script>
+	</body>
+</html>
