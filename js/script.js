@@ -1,25 +1,42 @@
-let dist_betw = 300;
+let dist_betw = 200;
 let quan = Math.round(window.innerHeight/200); //How much bubbles on 1 line
-let bubbles = [];
+let bubbles = [], diedBubbles = [];
 let canvas = document.getElementById("can_sec");
+let flag = false;
+let canv_mousex = 0, canv_mousey = 0;
 
 window.onload = function () {
 	let count = Math.floor(document.documentElement.clientWidth/dist_betw);
 	canvas.width = document.documentElement.clientWidth;
 	canvas.height = document.documentElement.clientHeight;
 
+
 	for (let lines = 0; lines < count; lines++) {
 		for (let i = 0; i < quan; i++)
 			bubbles[bubbles.length] = new Newbubble(lines, i+1);
 	}
 	
-	window.requestAnimationFrame(draw);
+	if(!flag) {
+		window.requestAnimationFrame(draw);
+		flag = true;
+	}
+}
+
+canvas.onmousemove = function (event) {
+	canv_mousex = event.offsetX;
+	canv_mousey = event.offsetY;
 }
 
 function draw () {
-	var ctx = canvas.getContext("2d");
+	if (canvas.width != document.documentElement.clientWidth || canvas.height != document.documentElement.clientHeight){
+		bubbles.length = 0;
+		window.onload();
+	}
 
+	var ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+	ctx.lineWidth = 2;
+	ctx.lineCap = "round";
 
 	for (let i = 0; i < bubbles.length; i++) {
 		bubbles[i].renderPosition();
@@ -46,12 +63,28 @@ function draw () {
 		ctx.arc(bubbles[i].x, bubbles[i].y, bubbles[i].reflrad, (Math.PI/180)*(190 + bubbles[i].cornchg), (Math.PI/180)*(260 + bubbles[i].cornchg));
 		ctx.stroke();
 
+		diedBubbles.forEach (function (item, index){
+			for (let deg = 0; deg < 360; deg += 45) {
+				ctx.beginPath();
+				ctx.moveTo(diedBubbles[index].close*Math.cos(deg*Math.PI/180) + diedBubbles[index].x, diedBubbles[index].close*Math.sin(deg*Math.PI/180) + diedBubbles[index].y);
+				ctx.lineTo(diedBubbles[index].far*Math.cos(deg*Math.PI/180) + diedBubbles[index].x, diedBubbles[index].far*Math.sin(deg*Math.PI/180) + diedBubbles[index].y)
+				ctx.stroke();
+			}
+			if (diedBubbles[index].renderPosition())
+				diedBubbles.splice(0, 1);
+		});
+		
 		let arr = findBubbles(i);
 		if (arr) {
 			for (let a of arr) {
-				bubbles[i].targetrad += bubbles[a].rad;
+				bubbles[i].targetrad += .6*bubbles[a].rad;
 				bubbles[a].y = -bubbles[a].rad;
 			}
+		}
+
+		if (canv_mousex > bubbles[i].x - bubbles[i].rad && canv_mousex < bubbles[i].x + bubbles[i].rad && canv_mousey > bubbles[i].y - bubbles[i].rad && canv_mousey < bubbles[i].y + bubbles[i].rad) {
+			diedBubbles[diedBubbles.length] = new Newpopanim(bubbles[i]);
+			bubbles[i].y = -bubbles[i].rad;
 		}
 	}
 	
@@ -63,7 +96,7 @@ function Newbubble (line, amount) {
 	this.num = amount;
 	this.rad = 1;
 	this.targetrad = Math.random() * 10 + 10;
-	this.speed = -(( 5 - this.rad/10)/2.5);
+	this.speed = -(( 5 - this.rad/12.5)/2.5);
 	this.x = line*dist_betw;
 	this.y = window.innerHeight + this.num*50*(Math.random()*5 + 1);
 	this.sin_f = Math.round(Math.random());
@@ -79,6 +112,7 @@ function Newbubble (line, amount) {
 		if(this.rad < this.targetrad){
 			this.rad += 1;
 			this.reflrad = this.rad/1.6;
+			this.speed = -(( 5 - this.rad/12.5)/2.5);
 		}
 		
 		this.y += this.speed;
@@ -105,6 +139,21 @@ function Newbubble (line, amount) {
 	}
 }
 
+function Newpopanim (diedB) {
+	this.x = diedB.x;
+	this.y = diedB.y;
+	this.rad = diedB.rad
+	this.close = this.rad;
+	this.far = this.close*1.3;
+	this.farspd = .09;
+	this.closesdp = .1;
+	this.renderPosition = function () {
+		this.close += this.closesdp;
+		this.far += this.farspd;
+		return (this.far <= this.close) ? true : false;
+	}
+}
+
 function findBubbles (iter) {
 	let arr = [];
 
@@ -112,9 +161,9 @@ function findBubbles (iter) {
 		if (i == iter)
 			continue;
 		
-		if (Math.abs(bubbles[iter].x - bubbles[i].x) < Math.max(bubbles[iter].rad, bubbles[i].rad) && Math.abs(bubbles[iter].y - bubbles[i].y) < Math.max(bubbles[iter].rad, bubbles[i].rad)) {
+		let raddistance = Math.max(bubbles[iter].rad + 0.5*bubbles[i].rad, bubbles[i].rad + 0.5*bubbles[iter].rad);
+		if (Math.abs(bubbles[iter].x - bubbles[i].x) < raddistance && Math.abs(bubbles[iter].y - bubbles[i].y) < raddistance)
 			arr[arr.length] = i;
-		}
 	}
 
 	return arr;
