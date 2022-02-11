@@ -77,14 +77,19 @@ function draw () {
 		let arr = findBubbles(i);
 		if (arr) {
 			for (let a of arr) {
-				bubbles[i].targetrad += .6*bubbles[a].rad;
-				bubbles[a].y = -bubbles[a].rad;
+				let bigger, smaller;
+				if (bubbles[a].rad > bubbles[i].rad) 
+				{bigger = a; smaller = i;} 
+				else 
+				{bigger = i; smaller = a;}
+				bubbles[bigger].targetrad += .6*bubbles[smaller].rad;
+				bubbles[smaller].y = -bubbles[smaller].rad;
 			}
 		}
 
-		if (canv_mousex > bubbles[i].x - bubbles[i].rad && canv_mousex < bubbles[i].x + bubbles[i].rad && canv_mousey > bubbles[i].y - bubbles[i].rad && canv_mousey < bubbles[i].y + bubbles[i].rad) {
+		if ((canv_mousex > bubbles[i].x - bubbles[i].rad && canv_mousex < bubbles[i].x + bubbles[i].rad && canv_mousey > bubbles[i].y - bubbles[i].rad && canv_mousey < bubbles[i].y + bubbles[i].rad) || bubbles[i].rad > 40) {
 			diedBubbles[diedBubbles.length] = new Newpopanim(bubbles[i]);
-			bubbles[i].y = -bubbles[i].rad;
+			bubbles[i].y = -Math.random()*bubbles[i].rad*10 - 100;
 		}
 	}
 	
@@ -96,7 +101,7 @@ function Newbubble (line, amount) {
 	this.num = amount;
 	this.rad = 1;
 	this.targetrad = Math.random() * 10 + 10;
-	this.speed = -(( 5 - this.rad/12.5)/2.5);
+	this.speed = -(( 5 - this.rad/15)/2.8);
 	this.x = line*dist_betw;
 	this.y = window.innerHeight + this.num*50*(Math.random()*5 + 1);
 	this.sin_f = Math.round(Math.random());
@@ -112,7 +117,7 @@ function Newbubble (line, amount) {
 		if(this.rad < this.targetrad){
 			this.rad += 1;
 			this.reflrad = this.rad/1.6;
-			this.speed = -(( 5 - this.rad/12.5)/2.5);
+			this.speed = -(( 5 - this.rad/15)/2.5);
 		}
 		
 		this.y += this.speed;
